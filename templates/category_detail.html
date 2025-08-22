@@ -1,1 +1,96 @@
-{% extends 'layout.html' %}{% block content %}<div class='d-flex align-items-center mb-3'><h1 class='h4 mb-0'>類別：{{ category.name }}</h1><a class='btn btn-outline-secondary ms-auto' href='{{ url_for('index') }}'>返回類別列表</a></div>{% if category.description %}<p class='text-muted'>{{ category.description }}</p>{% endif %}{% if styles %}<div class='mb-3 d-flex flex-wrap gap-2'><a href='#' class='btn btn-sm btn-outline-primary active' data-style='__all__'>全部</a>{% for s in styles %}<a href='#' class='btn btn-sm btn-outline-primary' data-style='{{ s.id }}'>{{ s.name }}</a>{% endfor %}</div>{% endif %}<div class='row g-3' id='prod-grid'>{% for p in products %}<div class='col-12 col-sm-6 col-md-4 col-lg-3 prod-card' data-style='{{ p.style_id or 'none' }}'><div class='card h-100'>{% if p.image_filename %}<img src='{{ url_for('static', filename='uploads/' ~ p.image_filename) }}' class='card-img-top' alt='{{ p.name }}'>{% else %}<img src='https://via.placeholder.com/600x400?text=No+Image' class='card-img-top' alt='No Image'>{% endif %}<div class='card-body d-flex flex-column'><h5 class='card-title'>{{ p.name }}</h5><p class='text-muted mb-2'>NT$ {{ p.price_display }}</p><a class='btn btn-primary mt-auto' href='{{ url_for('product_detail', product_id=p.id) }}'>查看</a></div></div></div>{% endfor %}{% if not products %}<div class='col-12'><div class='alert alert-info'>此類別尚無商品。</div></div>{% endif %}</div><script>document.querySelectorAll('[data-style]').forEach(el=>{if(el.tagName!=='A')return;el.addEventListener('click',e=>{e.preventDefault();const t=el.getAttribute('data-style');document.querySelectorAll('[data-style].active').forEach(a=>a.classList.remove('active'));el.classList.add('active');document.querySelectorAll('#prod-grid .prod-card').forEach(card=>{const sid=card.getAttribute('data-style');card.style.display=(t==='__all__'||sid===t)?'':'none';});});});</script>{% endblock %}
+{% extends 'layout.html' %} {% block content %}
+<div class="d-flex align-items-center mb-3">
+  <a
+    class="btn btn-outline-secondary me-2"
+    href="#"
+    onclick="event.preventDefault(); if (history.length > 1) { history.back(); } else { window.location.href='{{ url_for('index') }}'; }"
+    aria-label="回上一頁"
+    >←</a
+  >
+  <h1 class="h5 mb-0">類別：{{ category.name }}</h1>
+  <a class="btn btn-outline-secondary ms-auto" href="{{ url_for('index') }}"
+    >回首頁</a
+  >
+</div>
+<div class="d-flex align-items-center mb-3">
+  <h1 class="h4 mb-0">類別：{{ category.name }}</h1>
+  <a class="btn btn-outline-secondary ms-auto" href="{{ url_for('index') }}"
+    >返回類別列表</a
+  >
+</div>
+
+{% if category.description %}
+<p class="text-muted">{{ category.description }}</p>
+{% endif %} {% if styles %}
+<div class="mb-3 d-flex flex-wrap gap-2">
+  <a href="#" class="btn btn-sm btn-outline-primary active" data-style="__all__"
+    >全部</a
+  >
+  {% for s in styles %}
+  <a href="#" class="btn btn-sm btn-outline-primary" data-style="{{ s.id }}"
+    >{{ s.name }}</a
+  >
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="row g-3" id="prod-grid">
+  {% for p in products %}
+  <div
+    class="col-12 col-sm-6 col-md-4 col-lg-3 prod-card"
+    data-style="{{ p.style_id or 'none' }}"
+  >
+    <div class="card h-100">
+      {% if p.image_filename %}
+      <img
+        src="{{ url_for('static', filename='uploads/' ~ p.image_filename) }}"
+        class="card-img-top"
+        alt="{{ p.name }}"
+      />
+      {% else %}
+      <img
+        src="https://via.placeholder.com/600x400?text=No+Image"
+        class="card-img-top"
+        alt="No Image"
+      />
+      {% endif %}
+
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">{{ p.name }}</h5>
+        <p class="text-muted mb-2">NT$ {{ p.price_display }}</p>
+        <a
+          class="btn btn-primary mt-auto"
+          href="{{ url_for('product_detail', product_id=p.id) }}"
+          >查看</a
+        >
+      </div>
+    </div>
+  </div>
+  {% endfor %} {% if not products %}
+  <div class="col-12">
+    <div class="alert alert-info">此類別尚無商品。</div>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+  document.querySelectorAll("[data-style]").forEach((el) => {
+    if (el.tagName !== "A") return;
+    el.addEventListener("click", (e) => {
+      e.preventDefault();
+      const t = el.getAttribute("data-style");
+
+      document
+        .querySelectorAll("[data-style].active")
+        .forEach((a) => a.classList.remove("active"));
+      el.classList.add("active");
+
+      document.querySelectorAll("#prod-grid .prod-card").forEach((card) => {
+        const sid = card.getAttribute("data-style");
+        card.style.display = t === "__all__" || sid === t ? "" : "none";
+      });
+    });
+  });
+</script>
+
+{% endblock %}
