@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1 class="h4 mb-3">{{ '編輯類別' if category else '新增類別' }}</h1>
+
+<form method="post" enctype="multipart/form-data" class="row g-3">
+  <div class="col-12">
+    <label class="form-label">類別名稱</label>
+    <input type="text" name="name" class="form-control" value="{{ category.name if category else '' }}" required>
+  </div>
+
+  <div class="col-12">
+    <label class="form-label">描述</label>
+    <textarea name="description" rows="4" class="form-control">{{ category.description if category else '' }}</textarea>
+  </div>
+
+  <div class="col-12">
+    <label class="form-label">封面圖片（可選）</label>
+    <input type="file" name="image" accept="image/*" class="form-control">
+    {% if category and category.image_filename %}
+      <div class="form-text">目前圖片：{{ category.image_filename }}</div>
+    {% endif %}
+  </div>
+
+  <div class="col-12 d-flex gap-2">
+    <button class="btn btn-primary">{{ '儲存' if category else '建立' }}</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('admin_categories') }}">返回</a>
+  </div>
+</form>
+{% endblock %}

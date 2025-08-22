@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# venv
+.venv/
+
+# SQLite / local data
+shop.db
+*.db
+*.sqlite
+
+# uploads
+static/uploads/
+!static/uploads/.gitkeep
+
+# env files (local only)
+.env
+.env.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
