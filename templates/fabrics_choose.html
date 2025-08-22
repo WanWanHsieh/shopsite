@@ -1,0 +1,82 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="d-flex align-items-center mb-3">
+  <h1 class="h4 mb-0">布料選擇</h1>
+  <a class="btn btn-outline-secondary ms-auto" href="{{ url_for('index') }}">返回首頁</a>
+</div>
+<div class="row g-3">
+  {% for f in fabrics %}
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+    <div class="card h-100">
+      {% if f.image_filename %}
+        <img class="card-img-top" src="{{ url_for('static', filename='uploads/' ~ f.image_filename) }}" alt="{{ f.name }}">
+      {% else %}
+        <img class="card-img-top" src="https://via.placeholder.com/600x400?text=No+Image" alt="No Image">
+      {% endif %}
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title">{{ f.name }}</h5>
+        <div class="mt-auto d-flex gap-2">
+          {% if f.ref_images %}
+            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#ref{{ f.id }}">參考作品（{{ f.ref_images|length }}）</button>
+          {% elif f.ref_image_filename %}
+            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#ref{{ f.id }}">參考作品</button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if f.ref_images %}
+  <!-- Modal with carousel for multiple reference images -->
+  <div class="modal fade" id="ref{{ f.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">參考作品：{{ f.name }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div id="carousel{{ f.id }}" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              {% for r in f.ref_images %}
+              <div class="carousel-item {% if loop.first %}active{% endif %}">
+                <img class="d-block w-100" src="{{ url_for('static', filename='uploads/' ~ r.filename) }}" alt="ref {{ loop.index }}">
+              </div>
+              {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carousel{{ f.id }}" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carousel{{ f.id }}" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% elif f.ref_image_filename %}
+  <!-- Fallback single image modal (for old data) -->
+  <div class="modal fade" id="ref{{ f.id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">參考作品：{{ f.name }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <img class="img-fluid rounded" src="{{ url_for('static', filename='uploads/' ~ f.ref_image_filename) }}" alt="ref">
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% endfor %}
+  {% if not fabrics %}
+  <div class="col-12"><div class="alert alert-info">尚無可選布料。</div></div>
+  {% endif %}
+</div>
+{% endblock %}

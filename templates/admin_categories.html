@@ -1,1 +1,79 @@
-{% extends 'layout.html' %}{% block content %}<div class='d-flex align-items-center mb-3'><h1 class='h4 mb-0'>類別管理</h1><a class='btn btn成功 ms-auto btn-success' href='{{ url_for('admin_category_new') }}'>＋ 新增類別</a></div><div class='table-responsive'><table class='table align-middle'><thead><tr><th>ID</th><th>圖片</th><th>名稱</th><th>描述</th><th>款式管理</th><th>操作</th></tr></thead><tbody>{% for c in categories %}<tr><td>{{ c.id }}</td><td style='width:100px'>{% if c.image_filename %}<img src='{{ url_for('static', filename='uploads/' ~ c.image_filename) }}' class='img-thumbnail'>{% else %}<img src='https://via.placeholder.com/120x90?text=No+Image' class='img-thumbnail'>{% endif %}</td><td>{{ c.name }}</td><td class='small text-muted'>{{ c.description }}</td><td><a class='btn btn-sm btn-outline-secondary' href='{{ url_for('admin_styles', category_id=c.id) }}'>款式</a></td><td class='text-nowrap'><a class='btn btn-sm btn-outline-primary' href='{{ url_for('admin_category_edit', category_id=c.id) }}'>編輯</a><form class='d-inline' method='post' action='{{ url_for('admin_category_delete', category_id=c.id) }}' onsubmit="return confirm('確定刪除？此動作會一併刪除此類別底下的款式。');"><button class='btn btn-sm btn-outline-danger'>刪除</button></form></td></tr>{% endfor %}{% if not categories %}<tr><td colspan='6' class='text-center text-muted'>尚無類別</td></tr>{% endif %}</tbody></table></div>{% endblock %}
+{% extends 'layout.html' %} {% block content %} {# ----
+首頁入口卡片：依公開與首頁開關顯示 ---- #} {% if (FLAG_public_fabrics_choose and
+FLAG_show_home_fabrics_choose) or (FLAG_public_fabrics_clearance and
+FLAG_show_home_fabrics_clearance) %}
+<div class="row g-3 mb-4">
+  {% if FLAG_public_fabrics_choose and FLAG_show_home_fabrics_choose %}
+  <div class="col-12 col-md-6">
+    <a
+      class="card h-100 text-decoration-none"
+      href="{{ url_for('fabrics_choose') }}"
+    >
+      <div class="card-body d-flex align-items-center">
+        <h5 class="mb-0">布料選擇</h5>
+        {% if fabric_count is defined %}
+        <span class="badge text-bg-secondary ms-2">{{ fabric_count }}</span>
+        {% endif %}
+        <small class="text-muted ms-2">挑布專區</small>
+      </div>
+    </a>
+  </div>
+  {% endif %} {% if FLAG_public_fabrics_clearance and
+  FLAG_show_home_fabrics_clearance %}
+  <div class="col-12 col-md-6">
+    <a
+      class="card h-100 text-decoration-none border-danger"
+      href="{{ url_for('fabrics_clearance') }}"
+    >
+      <div class="card-body d-flex align-items-center">
+        <span class="badge text-bg-danger me-2">SALE</span>
+        <h5 class="mb-0 text-danger">布料出清</h5>
+        {% if clearance_count is defined %}
+        <span class="badge text-bg-danger ms-2">{{ clearance_count }}</span>
+        {% endif %}
+        <small class="text-muted ms-2">限量優惠</small>
+      </div>
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endif %} {# ---- 類別清單 ---- #}
+<h1 class="h4 mb-3">類別</h1>
+<div class="row g-3">
+  {% for c in categories %}
+  <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+    <div class="card h-100">
+      {% if c.image_filename %}
+      <img
+        class="card-img-top"
+        src="{{ url_for('static', filename='uploads/' ~ c.image_filename) }}"
+        alt="{{ c.name }}"
+      />
+      {% else %}
+      <img
+        class="card-img-top"
+        src="https://via.placeholder.com/600x400?text=No+Image"
+        alt="{{ c.name }}"
+      />
+      {% endif %}
+      <div class="card-body d-flex flex-column">
+        <h5 class="card-title mb-1">{{ c.name }}</h5>
+        {% if c.description %}
+        <p class="card-text small text-muted">{{ c.description }}</p>
+        {% endif %}
+        <a
+          class="btn btn-primary mt-auto"
+          href="{{ url_for('category_detail', category_id=c.id) }}"
+          >查看款式</a
+        >
+      </div>
+    </div>
+  </div>
+  {% endfor %} {% if not categories %}
+  <div class="col-12">
+    <div class="alert alert-info">尚無類別。</div>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

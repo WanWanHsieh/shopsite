@@ -1,0 +1,75 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1 class="h4 mb-3">{{ '編輯布料' if fabric else '新增布料' }}</h1>
+<form method="post" enctype="multipart/form-data" class="row g-3">
+  <div class="col-md-6">
+    <label class="form-label">布料主圖</label>
+    <input type="file" name="image" accept="image/*" class="form-control">
+    {% if fabric and fabric.image_filename %}
+      <div class="form-text">目前主圖：{{ fabric.image_filename }}</div>
+    {% endif %}
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label">參考作品（可多張）</label>
+    <input type="file" name="ref_images" accept="image/*" class="form-control" multiple>
+    <div class="form-text">可一次選取多張，或分次上傳。</div>
+  </div>
+
+  <div class="col-md-6">
+    <label class="form-label">名稱</label>
+    <input type="text" name="name" class="form-control" value="{{ fabric.name if fabric else '' }}" required>
+  </div>
+  <div class="col-md-6">
+    <label class="form-label">產地</label>
+    <input type="text" name="origin" class="form-control" value="{{ fabric.origin if fabric else '' }}">
+  </div>
+
+  <div class="col-md-4">
+    <label class="form-label">一般價格（NT$）</label>
+    <input type="number" step="0.01" name="price" class="form-control" value="{{ fabric.price_display if fabric else '' }}">
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">尺寸/幅寬</label>
+    <input type="text" name="size" class="form-control" value="{{ fabric.size if fabric else '' }}">
+  </div>
+  <div class="col-md-4 form-check mt-4">
+    <input class="form-check-input" type="checkbox" id="is_clearance" name="is_clearance" {% if fabric and fabric.is_clearance %}checked{% endif %}>
+    <label class="form-check-label" for="is_clearance">加入出清頁面</label>
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">出清價格（NT$，可留空）</label>
+    <input type="number" step="0.01" name="clearance_price" class="form-control" value="{{ fabric.clearance_price_display if fabric and fabric.clearance_price_display else '' }}">
+  </div>
+
+  <div class="col-12">
+    <label class="form-label">描述</label>
+    <textarea name="description" rows="4" class="form-control">{{ fabric.description if fabric else '' }}</textarea>
+  </div>
+
+  <div class="col-12 d-flex gap-2">
+    <button class="btn btn-primary">{{ '儲存' if fabric else '建立' }}</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('admin_fabrics') }}">返回</a>
+  </div>
+</form>
+
+{% if fabric %}
+<hr>
+<h2 class="h6 mb-3">已上傳的參考作品</h2>
+<div class="row g-3">
+  {% for r in fabric.ref_images %}
+  <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+    <div class="position-relative">
+      <img class="img-fluid rounded border" src="{{ url_for('static', filename='uploads/' ~ r.filename) }}" alt="ref">
+      <form method="post" action="{{ url_for('admin_fabric_ref_delete', fabric_id=fabric.id, ref_id=r.id) }}" class="mt-1 d-grid">
+        <button class="btn btn-sm btn-outline-danger" onclick="return confirm('確定刪除這張參考作品？');">刪除</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+  {% if not fabric.ref_images %}
+  <div class="col-12"><div class="text-muted">目前沒有參考作品圖片。</div></div>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

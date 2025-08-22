@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+{% block content %}
+<h1 class="h4 mb-3">網站顯示設定</h1>
+<form method="post" class="vstack gap-3">
+  <label class="form-check">
+    <input class="form-check-input" type="checkbox" name="public_shopfront" {% if flags.public_shopfront %}checked{% endif %}>
+    <span class="form-check-label">前台商品頁（首頁/分類/款式/商品）對訪客開放</span>
+  </label>
+  <label class="form-check">
+    <input class="form-check-input" type="checkbox" name="public_fabrics_choose" {% if flags.public_fabrics_choose %}checked{% endif %}>
+    <span class="form-check-label">布料選擇頁對訪客開放</span>
+  </label>
+  <label class="form-check">
+    <input class="form-check-input" type="checkbox" name="public_fabrics_clearance" {% if flags.public_fabrics_clearance %}checked{% endif %}>
+    <span class="form-check-label">布料出清頁對訪客開放</span>
+  </label>
+  <div>
+    <button class="btn btn-primary">儲存設定</button>
+    <a class="btn btn-outline-secondary" href="{{ url_for('admin_dashboard') }}">返回</a>
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+{% block content %}
+<div class="d-flex align-items-center mb-3">
+  <h1 class="h4 mb-0">布料管理</h1>
+  <a class="btn btn-success ms-auto" href="{{ url_for('admin_fabric_new') }}">＋ 新增布料</a>
+</div>
+<div class="table-responsive">
+  <table class="table align-middle">
+    <thead><tr>
+      <th>ID</th><th>圖片</th><th>名稱</th><th>產地</th><th>尺寸</th><th>一般價</th><th>出清</th><th>參考作品</th><th>操作</th>
+    </tr></thead>
+    <tbody>
+      {% for f in fabrics %}
+      <tr>
+        <td>{{ f.id }}</td>
+        <td style="width: 100px">
+          {% if f.image_filename %}
+            <img src="{{ url_for('static', filename='uploads/' ~ f.image_filename) }}" class="img-thumbnail">
+          {% else %}
+            <img src="https://via.placeholder.com/120x90?text=No+Image" class="img-thumbnail">
+          {% endif %}
+        </td>
+        <td>{{ f.name }}</td>
+        <td>{{ f.origin or '-' }}</td>
+        <td>{{ f.size or '-' }}</td>
+        <td>NT$ {{ f.price_display }}</td>
+        <td>{% if f.is_clearance %}<span class="badge text-bg-danger">出清</span>{% else %}<span class="badge text-bg-secondary">一般</span>{% endif %}</td>
+        <td>{{ f.ref_images|length }}</td>
+        <td class="text-nowrap">
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('admin_fabric_edit', fabric_id=f.id) }}">編輯</a>
+          <form class="d-inline" method="post" action="{{ url_for('admin_fabric_delete', fabric_id=f.id) }}" onsubmit="return confirm('確定刪除？');">
+            <button class="btn btn-sm btn-outline-danger">刪除</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      {% if not fabrics %}
+      <tr><td colspan="9" class="text-center text-muted">尚無布料紀錄</td></tr>
+      {% endif %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,1 +1,16 @@
-{% extends 'layout.html' %}{% block content %}<h1 class='h4 mb-3'>後台總覽</h1><div class='list-group'><a class='list-group-item list-group-item-action' href='{{ url_for('admin_categories') }}'>管理類別</a><a class='list-group-item list-group-item-action' href='{{ url_for('admin_products') }}'>管理商品</a></div>{% endblock %}
+{% extends 'layout.html' %}
+{% block content %}
+<h1 class="h4 mb-3">後台總覽</h1>
+<div class="list-group">
+  <a class="list-group-item list-group-item-action" href="{{ url_for('admin_categories') }}">管理類別</a>
+  <a class="list-group-item list-group-item-action" href="{{ url_for('admin_products') }}">管理商品</a>
+  <a class="list-group-item list-group-item-action" href="{{ url_for('admin_fabrics') }}">管理布料</a>
+  <a class="list-group-item list-group-item-action" href="{{ url_for('admin_settings') }}">網站顯示設定</a>
+</div>
+<hr>
+<div class="small text-muted">
+  公開頁面：
+  <a href="{{ url_for('fabrics_clearance') }}" class="link-primary">布料出清</a> ／
+  <a href="{{ url_for('fabrics_choose') }}" class="link-primary">布料選擇</a>
+</div>
+{% endblock %}
