@@ -558,15 +558,36 @@ def admin_style_delete(style_id):
 # 後台：商品／規格
 # =========================
 @app.route("/admin/products")
+@app.route("/admin/products")
 def admin_products():
     if not admin_required():
         return redirect(url_for("admin_login"))
     db = SessionLocal()
-    products = db.query(Product).order_by(Product.id.desc()).all()
+
+    # 讀取篩選參數
+    cat_id = request.args.get("category_id", type=int)
+    style_id = request.args.get("style_id", type=int)
+
+    q = db.query(Product)
+    if cat_id:
+        q = q.filter(Product.category_id == cat_id)
+    if style_id:
+        q = q.filter(Product.style_id == style_id)
+
+    products = q.order_by(Product.id.desc()).all()
     categories = db.query(Category).order_by(Category.name).all()
     styles = db.query(Style).order_by(Style.name).all()
+
+    current_category = db.get(Category, cat_id) if cat_id else None
+    current_style = db.get(Style, style_id) if style_id else None
+
     return render_template(
-        "admin_products.html", products=products, categories=categories, styles=styles
+        "admin_products.html",
+        products=products,
+        categories=categories,
+        styles=styles,
+        current_category=current_category,
+        current_style=current_style,
     )
 
 
